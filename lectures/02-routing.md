@@ -95,7 +95,7 @@ import Link from 'next/link';
 const posts = [
   { id: '1', title: 'はじめての投稿' },
   { id: '2', title: '「それでも」と言い続けろ' },
-  { id: '3', title: '' },
+  { id: '3', title: '輝きの向こう側へ' },
 ];
 
 export default function PostsPage() {
@@ -132,16 +132,6 @@ export default async function PostDetailPage({ params }: Props) {
   );
 }
 ```
-
-### ⚠️ ここで一度ハマるところ: `params` は Promise
-
-Next.js 15 以降、`params` は **Promise** になりました (パフォーマンス改善のため)。
-そのため:
-
-- **関数を `async` にする**
-- **`await params` してから使う**
-
-の2つがセットで必要です。古いブログ記事に `params.id` を直接書いているものがあれば、それは古い情報です。
 
 ---
 
@@ -206,7 +196,7 @@ export default function NotFound() {
 
 ---
 
-## ハンズオン (40分)
+## ハンズオン
 
 スターターを動かした状態で、以下を1つずつやります。
 
