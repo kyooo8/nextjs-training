@@ -9,14 +9,6 @@
 
 ---
 
-## なぜこの章があるか
-
-App Router の最大の新しさは、**コンポーネントに「サーバーで動くもの」「ブラウザで動くもの」の2種類がある** ことです。
-ここを曖昧にしたまま 04章 (データ取得) に進むと、ほぼ確実にハマります。
-逆にこの章を腹落ちさせれば、Next.js の8割は理解したと言って良いです。
-
----
-
 ## この章で出てくる用語
 
 | 用語 | ざっくり |
@@ -92,11 +84,11 @@ export default function Counter() {
 - `window` / `localStorage` などのブラウザAPI
 
 **できないこと**:
-- DB の直接アクセス (= ブラウザに DBパスワードを送りたくない)
+- DB の直接アクセス(ブラウザに機密情報を送ることになる)
 - APIキーの使用
 - `async function Component()` の形 (Client Component は async にできない)
 
-> 💡 注意: 「Client Component」と言うけど、**初回表示時はサーバーでも一度レンダリングされる** (HTML を生成するため)。
+> 💡 注意: 「Client Component」は**初回表示時はサーバーでも一度レンダリングされる** (HTML を生成するため)。
 > その後ブラウザで JS が読み込まれて、ボタンが押せるようになる (これが Hydration)。
 > 完全にブラウザだけで動くわけではない、と頭の隅に置いておいてください。
 
@@ -115,14 +107,12 @@ export default function Counter() {
     └─ Yes → Server Component 一択
 ```
 
-**原則**: **「迷ったら Server Component」**。
-Client にするのは「絶対必要なとき」だけにします。理由は次のセクションで。
+原則としてServer Componentを使う様にしましょう。
+Client にするのはどうしても必要なときだけにします。
 
 ---
 
 ## `"use client"` は "伝染する"
-
-ここがクセモノです。
 
 `"use client"` を書いたファイルが **import するファイルも、全部 Client Component になる** ことが決まっています。
 これを「境界」と呼びます。
