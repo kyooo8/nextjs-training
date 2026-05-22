@@ -25,8 +25,8 @@
 
 ## デフォルトは Server Component
 
-App Router では、**何も書かなければそのコンポーネントは Server Component** です。
-02章で書いたページは全部 Server Component でした。
+App Routerでは、何も書かなければそのコンポーネントはServer Componentです。
+02章で書いたページは全部Server Componentでした。
 
 ### Server Component の特徴
 
@@ -84,11 +84,10 @@ export default function Counter() {
 - `window` / `localStorage` などのブラウザAPI
 
 **できないこと**:
-- DB の直接アクセス(ブラウザに機密情報を送ることになる)
-- APIキーの使用
+- サーバー側の要素(DB情報やAPIなど)の直接アクセス(ブラウザに機密情報を送ることになる)
 - `async function Component()` の形 (Client Component は async にできない)
 
-> 💡 注意: 「Client Component」は**初回表示時はサーバーでも一度レンダリングされる** (HTML を生成するため)。
+> 💡 注意: 「Client Component」は初回表示時はサーバーでも一度レンダリングされる(HTML を生成するため)。
 > その後ブラウザで JS が読み込まれて、ボタンが押せるようになる (これが Hydration)。
 > 完全にブラウザだけで動くわけではない、と頭の隅に置いておいてください。
 
@@ -108,14 +107,13 @@ export default function Counter() {
 ```
 
 原則としてServer Componentを使う様にしましょう。
-Client にするのはどうしても必要なときだけにします。
+Clientにするのはどうしても必要なときだけにします。
 
 ---
 
 ## `"use client"` は "伝染する"
 
-`"use client"` を書いたファイルが **import するファイルも、全部 Client Component になる** ことが決まっています。
-これを「境界」と呼びます。
+`"use client"` を書いたファイルがimportするファイルも、全部Client Component になることが決まっています。
 
 ```tsx
 // components/Layout.tsx
@@ -142,13 +140,13 @@ import Footer from './Footer';  // ← Footer も自動的に Client 扱い
              └─ <LikeButton> "use client"   ← ここだけ Client
 ```
 
-「ボタンだけ」「フォームだけ」と、**小さく** Client にするのがコツです。
+「ボタンだけ」「フォームだけ」と、小さくClientにするのがコツです。
 
 ---
 
 ## ハンズオン1: ボタンだけ Client にする
 
-ページ全体は Server のまま、お気に入りボタンだけを Client にしてみます。
+ページ全体はServerのまま、お気に入りボタンだけをClientにしてみます。
 
 **作るファイル1**: クライアント側のボタン `src/app/components/FavoriteButton.tsx`
 
@@ -168,9 +166,8 @@ export default function FavoriteButton() {
 }
 ```
 
-**編集するファイル**: `src/app/posts/[id]/page.tsx`
-
 ```tsx
+// src/app/posts/[id]/page.tsx
 import FavoriteButton from '@/app/components/FavoriteButton';
 
 type Props = { params: Promise<{ id: string }> };
@@ -222,10 +219,10 @@ return <ChildClient onClick={callback} />;
 
 ## 逆方向: Client の中に Server を入れたい
 
-「Client Component の中で Server Component を直接 import する」 は **できません**。
-import すると伝染で Server が Client になってしまうからです。
+「Client Componentの中でServer Componentを直接importする」は**できません**。
+import すると伝染でServerがClientになってしまうからです。
 
-代わりに **`children` プロップス経由で渡す** パターンを使います。
+代わりに`children`プロップス経由で渡すパターンを使います。
 
 ```tsx
 // components/Modal.tsx (Client)
@@ -257,16 +254,13 @@ export default function Page() {
 }
 ```
 
-**ポイント**: 親 (Server) が **両方を子要素として組み立てる**。Modal は中身を「箱に入れて表示する」だけ。
+**ポイント**: 親 (Server)が両方を子要素として組み立てる。Modalは中身を「箱に入れて表示する」だけ。
 
 ---
 
 ## ハンズオン2: 検索ボックス (Client) + 結果表示 (Server)
 
-「検索ボックスは Client、検索結果は Server」 の組み合わせを作ります。
-※ 実際の検索は次章でやるので、ここでは **構造だけ** 練習。
-
-**作るファイル**: `src/app/components/SearchBox.tsx`
+「検索ボックスはClient、検索結果はServer」の組み合わせを作ります。
 
 ```tsx
 // src/app/components/SearchBox.tsx
@@ -292,7 +286,34 @@ export default function SearchBox() {
 }
 ```
 
-**編集**: `src/app/posts/page.tsx` の上部に `<SearchBox />` を置く。
+`src/app/posts/page.tsx` の上部に `<SearchBox />` を置く。
+
+```tsx
+// src/app/posts/page.tsx
+import Link from 'next/link';
+import SearchBox from '@/app/components/SearchBox';
+const posts = [
+  { id: '1', title: 'はじめての投稿' },
+  { id: '2', title: '「それでも」と言い続けろ' },
+  { id: '3', title: '輝きの向こう側へ' },
+];
+
+export default function PostsPage() {
+  return (
+    <main>
+      <h1>投稿一覧</h1>
+      <SearchBox />   {/* ← Client Component */}
+      <ul>
+        {posts.map((p) => (
+          <li key={p.id}>
+            <Link href={`/posts/${p.id}`}>{p.title}</Link>
+          </li>
+        ))}
+      </ul>
+    </main>
+  );
+}
+```
 
 確認: 検索ボタンを押すと URL に `?q=...` が付くこと。
 (検索結果を絞り込む処理は 04章 で `searchParams` を使ってやります)
@@ -301,15 +322,15 @@ export default function SearchBox() {
 
 ## よくある勘違い
 
-- **「Client Component はクライアントだけで動く」** → 違う。初回は **サーバーでもレンダリング** される (Hydration のため)
-- **「`"use client"` をたくさん付けても問題ない」** → JSバンドルが膨れる、初回表示が遅くなる
-- **「Server Component なら何でも秘密が守られる」** → **`props` として渡したものはクライアントに送られる**。秘密は Server Component の中だけで使う
+- 「Client Component はクライアントだけで動く」→ 初回は **サーバーでもレンダリング** される (Hydration のため)
+- 「`"use client"` をたくさん付けても問題ない」→ JSバンドルが膨れる、初回表示が遅くなる
+- 「Server Component なら何でも秘密が守られる」→ **`props` として渡したものはクライアントに送られる**。秘密は Server Component の中だけで使う
 
 ---
 
 ## ハンズオン3: 意図的に壊して、エラーメッセージを読む
 
-エラーメッセージを **読める** ようになるのは超重要スキル。意図的に壊してみます。
+意図的に壊してみましょう。
 
 ### A. Server Component で `useState` を使ってみる
 
@@ -324,30 +345,28 @@ export default function AboutPage() {
 ```
 
 → どんなエラーが出るか、メッセージを読む。
-→ 直し方: ファイル先頭に `"use client"` を追加するか、構造を見直す。
+→ 直し方: ファイル先頭に`"use client"`を追加するか、構造を見直す。
 
 ### B. Server から Client に関数を渡す
 
-`FavoriteButton` に `onClick={() => ...}` を Server から渡そうとしてみる。
+`FavoriteButton`に`onClick={() => ...}`をServerから渡そうとしてみる。
 → "Functions cannot be passed directly to Client Components..." が出ます。
-
-> **エラーメッセージを読む習慣** をつけてください。ググる前に、まずメッセージに目を通す。Next.js のエラーは比較的親切です。
 
 ---
 
 ## 詰まったら (Q&A)
 
 **Q. "You're importing a component that needs `useState`..." と出る**
-A. その Component を Client にする必要があります。先頭に `"use client"` を追加。
+A. そのComponentをClientにする必要があります。先頭に`"use client"`を追加。
 
 **Q. ボタンが反応しない (クリックしても何も起きない)**
-A. `"use client"` を書き忘れていないか確認。ない状態でも JSX としてはレンダリングされるが、JS がアタッチされないので反応しません。
+A. `"use client"`を書き忘れていないか確認。ない状態でもJSXとしてはレンダリングされるが、JS がアタッチされないので反応しません。
 
 **Q. ページ全体が遅い気がする**
-A. ルートの `layout.tsx` に `"use client"` を付けていないか確認。配下が全部 Client になります。
+A. ルートの`layout.tsx`に`"use client"`を付けていないか確認。配下が全部Clientになります。
 
 **Q. ブラウザのソースを見たら、コードが見える!**
-A. ブラウザに送られる = ソースに出る、という前提で考えてください。秘密情報 (APIキーなど) は **Server Component の中だけ** で使うこと。
+A. ブラウザに送られる = ソースに出る、という前提で考えてください。秘密情報 (APIキーなど)はServer Componentの中だけで使うこと。
 
 ---
 
