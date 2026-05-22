@@ -103,9 +103,3 @@ function Card({ children }: { children: React.ReactNode }) {
 - [ ] `useState` / `props` / `children` の意味を思い出した
 
 全部 ✓ なら、[01-what-is-nextjs.md](01-what-is-nextjs.md) へ進みましょう。
-
----
-
-## 次の章へ
-
-01章では「そもそも Next.js って何?」と「App Router の全体地図」を見ます。
