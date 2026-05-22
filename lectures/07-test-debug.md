@@ -1,21 +1,11 @@
 # 07. テストとデバッグの最低ライン
 
-> **講義 30分 + ハンズオン 30分**
-> 「完璧なテスト」ではなく、ハッカソンで動かないときに **自分で切り分けられる手段** を渡します。
-
 ## この章のゴール
 
 - Vitest + React Testing Library で Client Component を1つテストできる
 - Server Component のテスト方針を理解する (主に E2E)
 - Hydration mismatch / 境界エラーなど、よくあるエラーの読み方がわかる
 - ハッカソン中に詰まったときの「切り分けの順番」を持っている
-
----
-
-## なぜこの章があるか
-
-ハッカソンで一番怖いのは **「動かない、でも理由がわからない」** 状態です。
-完璧なテスト網は要りません。「1つでもテストがある」「エラーを読める」「自分で切り分けられる」を満たせれば、Day 3〜5 を乗り切る武器になります。
 
 ---
 
@@ -159,7 +149,7 @@ npm test
 
 ## Server Component のテスト方針
 
-**Server Component を直接 RTL でテストするのは難しい** です (async + サーバー前提なので)。
+Server Componentを直接RTLでテストするのは難しいです (async + サーバー前提なので)。
 現実的には:
 
 1. **ロジックを切り出す** → `lib/posts.ts` などに純粋関数として置く → そっちをテスト
@@ -244,7 +234,6 @@ npx playwright test
 
 - "You're importing a component that needs `useState`..." → `"use client"` を追加
 - "Functions cannot be passed directly to Client Components" → 関数渡しをやめるか Server Action にする
-- **エラーメッセージは比較的親切**。まず読んでから検索する習慣を
 
 ### キャッシュ起因で更新されない
 
@@ -274,7 +263,7 @@ npx playwright test
 
 ---
 
-## ハンズオン (30分)
+## ハンズオン
 
 ### 1. Vitest セットアップ
 - 上のコマンドで Vitest 一式入れる
@@ -320,10 +309,3 @@ A. 必須は1つだけです (`FavoriteButton` のテストでも、純粋関数
 - [ ] Server Component のテスト方針 (ロジック切り出し + E2E) を理解した
 - [ ] Hydration mismatch の典型原因を3つ言える
 - [ ] 「動かないとき」 の切り分け手順 (1〜5) を覚えた
-
----
-
-## 次の章へ
-
-[08-hackathon-prep.md](08-hackathon-prep.md) ── いよいよハッカソンです。
-お題決めと、3日で完成させるためのコツを話します。

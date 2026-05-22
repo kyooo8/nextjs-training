@@ -1,8 +1,5 @@
 # 04. Server でデータを取る
 
-> **講義 30分 + ハンズオン 45分**
-> Server Component で `await fetch()` する書き心地を体験する回。
-
 ## この章のゴール
 
 - Server Component で `fetch` してデータを取り、そのまま画面に出せる
@@ -12,20 +9,11 @@
 
 ---
 
-## なぜこの章があるか
-
-React 時代の常識は「`useEffect` の中で `fetch` → `setState`」でした。
-App Router (Server Component) の世界では、その書き方は **第一選択ではありません**。
-ここを切り替えると、コード量が劇的に減り、見通しが良くなります。
-
----
-
 ## この章で出てくる用語
 
 | 用語 | ざっくり |
 |------|---------|
 | **コロケーション** | データ取得を「使う場所のすぐそば」に書く設計思想 |
-| **Request Memoization** | 同じURLへの `fetch` を1リクエスト中に自動でまとめてくれる仕組み |
 | **`searchParams`** | URL の `?key=value` 部分を読む props (Promise) |
 | **Route Handler** | `app/api/.../route.ts` の HTTP エンドポイント |
 
@@ -61,7 +49,6 @@ export default async function PostsPage() {
 これだけで動きます。
 
 **ポイント**:
-- `getServerSideProps` のような「props で渡す」儀式は **不要**
 - 関数の中で直接 `await` できるので、コードが上から下に素直に読める
 - 出てくる HTML はサーバーで完成済み (= 初回表示が速い、SEO も良い)
 
@@ -69,47 +56,31 @@ export default async function PostsPage() {
 
 ## 「データ取得を近くに置く」 = コロケーション
 
-従来 (Pages Router / Express) :
+別のサーバー (Express など) で API を作って、React からそれを叩く構成だと:
 
 ```
-getServerSideProps で取得   ← データ取得
-        ↓ props
-コンポーネント              ← データ使用
-        ↓ さらに props
-子コンポーネント            ← データ使用
+[ブラウザ React] useEffect で fetch を発火
+        ↓
+ローディング表示 (空っぽ or スピナー)
+        ↓
+[サーバー API] レスポンスを返す
+        ↓
+[ブラウザ React] setState して再レンダー
 ```
 
-App Router:
+データを使うコンポーネントが上の階層にあると、props でバケツリレーする必要も出てきます。
+
+App Router の Server Component なら:
 
 ```
-コンポーネント
+コンポーネント (サーバーで実行)
   ├ const data = await fetch(...)   ← 取得と使用が同じ場所
   └ return <... data ... >
 ```
 
-「取得 → props で延々と引き回す」のバケツリレーが消えます。
+データ取得とそれを使う JSX が **同じ関数の中** にある。
+バケツリレーも、ローディングのちらつきもなし。
 これが **コロケーション** という設計思想です。
-
----
-
-## 同じデータを2回 fetch しても大丈夫
-
-「親レイアウトでもユーザー情報がいる、子ページでもユーザー情報がいる」 ── そんなとき、両方で `fetch` していいの? と心配になります。
-
-答え: **同じリクエスト中なら自動で1回にまとめてくれる** (Request Memoization)。
-
-```tsx
-// layout でも...
-const user = await fetch('/api/me').then(r => r.json());
-
-// page でも...
-const user = await fetch('/api/me').then(r => r.json());
-// → 実際のHTTPリクエストは 1 回だけ
-```
-
-→ だから「データ取得を共通化するために props で渡す」必要があまりありません。**欲しい場所で取りに行けばいい**。
-
-> ⚠️ 注意: dedupe (重複排除) されるのは **同一の URL + メソッド** の場合だけ。DB 直アクセスや、別関数で包んだ場合は別ルール (詳しくは06章のキャッシュで)。
 
 ---
 
@@ -145,7 +116,7 @@ export default async function PostDetailPage({ params }: Props) {
 
 ## `searchParams` で `?q=...` を読む
 
-URL の `?q=React` のような **クエリ文字列** を読むには、props の `searchParams` を使います。
+URL の `?q=React` のようなクエリ文字列を読むには、props の `searchParams` を使います。
 これも `params` と同じく **Promise** です。
 
 ```tsx
@@ -178,13 +149,13 @@ export default async function PostsPage({ searchParams }: Props) {
 }
 ```
 
-03章で作った `SearchBox` (Client) と組み合わせると、**「Client で検索文字列を URL に入れる → Server がそれを読んで絞り込んだ HTML を返す」** が完成します。
+03章で作った `SearchBox` (Client) と組み合わせると、「Client で検索文字列を URL に入れる → Server がそれを読んで絞り込んだ HTML を返す」が完成します。
 
 ---
 
 ## 取得中の表示: `loading.tsx`
 
-データ取得には時間がかかります。読み込み中の画面を `loading.tsx` で簡単に作れます。
+データ取得には時間がかかります。読み込み中の画面を`loading.tsx`で簡単に作れます。
 
 ```tsx
 // src/app/posts/loading.tsx
@@ -193,7 +164,7 @@ export default function Loading() {
 }
 ```
 
-`/posts` を開くと、データが届くまで「読み込み中…」と表示されます。これは内部的には React の `Suspense` を使った仕組みです (詳しくは06章)。
+`/posts`を開くと、データが届くまで「読み込み中…」と表示されます。これは内部的にはReactの`Suspense`を使った仕組みです(詳しくは06章)。
 
 ---
 
@@ -219,7 +190,7 @@ export default async function PostsPage() {
 
 ## Route Handler (`route.ts`) って何に使うの?
 
-`app/api/.../route.ts` を作ると **REST API エンドポイント** が作れます。
+`app/api/.../route.ts`を作るとREST API エンドポイントが作れます。
 
 ```ts
 // src/app/api/health/route.ts
@@ -228,11 +199,11 @@ export async function GET() {
 }
 ```
 
-`http://localhost:3000/api/health` を開くと `{ "ok": true }` が返ります。
+`http://localhost:3000/api/health`を開くと`{ "ok": true }`が返ります。
 
 ### でも、いつ使うの?
 
-「ページ表示用のデータは Server Component の中で取ればいい」となると、Route Handler の出番は限られます。
+「ページ表示用のデータはServer Componentの中で取ればいい」となると、Route Handlerの出番は限られます。
 
 **使うとき**:
 - **外部のシステムから HTTP で叩かれる** エンドポイント (Webhook、OAuth コールバック)
@@ -243,7 +214,7 @@ export async function GET() {
 - 自分のページに表示するデータ取得 → Server Component で直接やる
 - フォーム送信や書き込み → **Server Actions** (05章)
 
-> 💡 「Pages Router 時代の `pages/api/...` の置き換え」のように思いがちですが、App Router では出番がぐっと減ります。
+> 💡 「`/api/...` といえばまず Route Handler」 のように思いがちですが、App Router では Server Component と Server Actions が表示・更新を直接担うので、Route Handler の出番はぐっと減ります。
 
 ---
 

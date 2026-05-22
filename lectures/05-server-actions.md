@@ -1,21 +1,11 @@
 # 05. Server Actions でデータを更新する
 
-> **講義 40分 + ハンズオン 45分**
-> フォーム送信や「DBに書き込む」処理を、関数呼び出しのように書ける機能を学びます。
-
 ## この章のゴール
 
 - Server Action でフォーム送信を実装できる
 - `"use server"` の付け方 (2パターン) を理解する
 - 書き込み後に画面を更新する (`revalidatePath`) を使える
 - バリデーションと、画面へのエラー表示を書ける
-
----
-
-## なぜこの章があるか
-
-「フォーム送信 → API を叩く → 結果を表示」という、Web の中で最も多い処理を、Next.js では **関数を呼ぶように** 書けます。
-04章で「データ取得」を Server Component で書いたのと対になる、「データ更新」の章です。
 
 ---
 
@@ -58,7 +48,7 @@ Server Action:
 [サーバー] createPost を実行
 ```
 
-中身は HTTP 通信ですが、書き手にはほぼ見えません。**「サーバーの関数を呼んでるだけ」** に見える、ということ。
+中身は HTTP 通信ですが、書き手にはほぼ見えません。「サーバーの関数を呼んでるだけ」に見える、ということ。
 
 ---
 
@@ -77,8 +67,8 @@ export async function createPost(formData: FormData) {
 }
 ```
 
-ファイルの最上部に `"use server"` を1行書けば、そのファイルの **export 関数すべて** が Server Action として扱われます。
-Client からも import できるので、Client Component から呼ぶときはこれ。
+ファイルの最上部に `"use server"` を1行書けば、そのファイルのexport 関数すべてがServer Actionとして扱われます。
+Clientからもimportできるので、Client Component から呼ぶときはこれを使いましょう。
 
 ### 方法2: 関数の中に書く (Server Component と同じファイルで完結したいとき)
 
@@ -99,7 +89,7 @@ export default function NewPostPage() {
 }
 ```
 
-**使い分け**: 複数の Action があるなら方法1。1ページに1つだけなら方法2でもOK。研修では **方法1** を基本に。
+複数のActionがあるなら方法1。1ページに1つだけなら方法2でもOK。研修では方法1を基本に。
 
 ---
 
@@ -107,9 +97,8 @@ export default function NewPostPage() {
 
 「投稿タイトルを送って、コンソールに出すだけ」の最小例。
 
-**作るファイル1**: `src/app/posts/actions.ts`
-
 ```ts
+// src/app/posts/actions.ts
 "use server";
 
 export async function createPost(formData: FormData) {
@@ -119,9 +108,8 @@ export async function createPost(formData: FormData) {
 }
 ```
 
-**作るファイル2**: `src/app/posts/new/page.tsx`
-
 ```tsx
+// src/app/posts/new/page.tsx
 import { createPost } from '../actions';
 
 export default function NewPostPage() {
@@ -139,16 +127,16 @@ export default function NewPostPage() {
 
 これだけで動きます。フォームを送るとサーバー側のターミナルに `受け取り: ○○` と出るはずです。
 
-> 💡 すごいポイント: **JavaScript が無効でも動きます**。フォームの `action` 属性がちゃんと使われているので、ブラウザの標準動作で送信されるからです。
+ちなみにブラウザのJavaScriptが無効でも動きます。フォームの `action` 属性がちゃんと使われているので、ブラウザの標準動作で送信されるからです。
 
 ---
 
 ## 書き込み後に画面を更新する: `updateTag`
 
 DBに保存しただけでは、一覧ページのキャッシュが古いまま残っていることがあります。
-**「このタグが付いたキャッシュを捨てて、次のリクエストで作り直して」** と指示するのが `updateTag` です。
+「このタグが付いたキャッシュを捨てて、次のリクエストで作り直して」と指示するのが `updateTag` です。
 
-Next.js 16 (Cache Components) では、書き込み直後の更新には **`updateTag`** が推奨されます (旧来の `revalidatePath` でも動きますが、タグベースの方が精密)。
+Next.js 16 (Cache Components) では、書き込み直後の更新には `updateTag`が推奨されます (旧来の `revalidatePath` でも動きますが、タグベースの方が精密)。
 
 ```ts
 // src/app/posts/actions.ts
@@ -176,16 +164,14 @@ export function getPosts() {
 ```
 
 **ポイント**:
-- `updateTag('posts')` を **書き込みの後** に呼ぶ
-- これが効くためには、**読み込み側 (`getPosts`) に `cacheTag('posts')` が付いている** 必要がある (06章で詳しく)
+- `updateTag('posts')` を書き込みの後に呼ぶ
+- これが効くためには、読み込み側 (`getPosts`) に `cacheTag('posts')` が付いている必要がある
 - `redirect('/posts')` で一覧ページに飛ばす (戻ったときに新しい投稿が見える)
 
 > 💡 関数の使い分けまとめ:
 > - **`updateTag`**: Server Actions 内、即時破棄 (自分の書き込みを今すぐ反映したい)
 > - **`revalidateTag`**: Server Actions と Route Handlers、stale-while-revalidate (少し遅れて反映でもOK)
 > - **`revalidatePath`**: パス単位でざっくり破棄 (タグが分からないときの保険)
->
-> 詳しくは 06章。
 
 ---
 
@@ -212,14 +198,14 @@ export async function createPost(formData: FormData) {
 }
 ```
 
-> 💡 本格的にやるなら **zod** などのスキーマバリデーターを使うのが定番ですが、研修では「`if` でチェック」で十分です。
+> 💡 本格的にやるならzodなどのスキーマバリデーターを使うのが定番ですが、研修では「`if` でチェック」で十分です。
 
 ---
 
 ## エラーをフォームの上に表示する: `useActionState`
 
-フォーム送信の結果をフォームの上に表示したいとき、`useActionState` (React 19) を使います。
-これは Client Component の機能。
+フォーム送信の結果をフォームの上に表示したいとき、`useActionState`(React 19)を使います。
+これはClient Componentの機能です。
 
 **Action を変更**: 戻り値の形を決める
 
@@ -266,9 +252,8 @@ export default function PostForm() {
 }
 ```
 
-**ページから使う**: `src/app/posts/new/page.tsx`
-
 ```tsx
+// src/app/posts/new/page.tsx
 import PostForm from './PostForm';
 
 export default function NewPostPage() {
@@ -296,9 +281,9 @@ export default function NewPostPage() {
 
 ---
 
-## 削除ボタンも Server Action で
+## 削除ボタンもServer Actionで
 
-ボタン1つ = Server Action 1つ。次のように書けます。
+ボタン1つ = Server Action1つ。次のように書けます。
 
 ```tsx
 // src/app/posts/[id]/DeleteButton.tsx
@@ -332,7 +317,7 @@ export async function deletePost(id: number) {
 
 ---
 
-## ハンズオン (45分)
+## ハンズオン
 
 ### 1. 投稿フォームを Server Action で作る
 - `src/app/posts/actions.ts` を作る (`"use server"` + `createPost`)
@@ -383,10 +368,3 @@ A. はい。フォームの `action` 属性が普通に使われるので、ブ�
 - [ ] `updateTag` / `revalidateTag` / `revalidatePath` の使い分けをざっくり知っている
 - [ ] エラーは「想定内 → 戻り値で返す」「異常 → throw」の使い分けを知っている
 - [ ] `useActionState` でエラーをフォーム上に表示できる
-
----
-
-## 次の章へ
-
-[06-rendering-cache.md](06-rendering-cache.md) ── 新卒最大の沼、キャッシュとレンダリング戦略を **地図** にまとめます。
-04・05章で何度か出てきた「キャッシュ」の正体を、ここで一気に整理します。

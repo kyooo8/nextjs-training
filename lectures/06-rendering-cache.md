@@ -1,25 +1,13 @@
 # 06. レンダリング戦略とキャッシュ
 
-> 完全暗記は不要。**「Next.js 16 のキャッシュは明示する世界」 と「動的な部分は `<Suspense>` で囲う」** の 2つだけ覚えて帰ってください。
-
 ## この章のゴール
 
 - Static / Streaming / Dynamic の違いを 30秒で説明できる
-- Next.js 16 の Cache Components モデル (**明示的にキャッシュする**) を理解する
+- Next.js 16のCache Componentsモデル (**明示的にキャッシュする**) を理解する
 - `'use cache'` でコンポーネント・関数をキャッシュできる
 - `cacheLife` (寿命) と `cacheTag` (タグ) の役割がわかる
 - 書き込み後のキャッシュ破棄は `updateTag` / `revalidateTag` を使い分けられる
 - 動的な処理 (cookies / searchParams など) は `<Suspense>` で囲う、を体得する
-
----
-
-## なぜこの章があるか
-
-Next.js のキャッシュは、新卒の沼です。
-Next.js 14 → 15 → 16 で **モデル自体がかなり変わった** ので、ブログ記事を読むだけだと「どれが正しいの?」 となります。
-ここで現行 (Next.js 16) の **Cache Components** モデルの地図を渡します。完璧理解は不要。「困ったとき戻ってくる場所」 として使ってください。
-
-> ⚠️ **古い記事に注意**: 「Next.js は fetch を自動でキャッシュする」「`{ cache: 'force-cache' }` がデフォルト」 と書いてあるブログ記事は、ほぼ Next.js 14 までの話 (旧モデル) です。
 
 ---
 
@@ -45,7 +33,6 @@ Next.js 14 → 15 → 16 で **モデル自体がかなり変わった** ので�
 
 > 一行で: **デフォルトでは何もキャッシュされない。`'use cache'` を書いた部分だけがキャッシュされる**。
 
-これが Next.js 14 までと一番違う点です。
 有効化するには、`next.config.ts` に1行追加します。
 
 ```ts
@@ -60,7 +47,6 @@ export default nextConfig
 ```
 
 研修のスターターでは、これを有効にした前提で進めます。
-(無効のまま、つまり旧モデルで動かすことも可能ですが、研修では混乱を避けるため新モデル一本)
 
 ---
 
@@ -93,7 +79,7 @@ export default nextConfig
 
 ## どんな処理が「dynamic」 扱いになるか
 
-App Router (Cache Components 有効時) では、以下を **`<Suspense>` で囲うか `'use cache'` でキャッシュするか** のどちらかをしないと、**ビルドエラー** になります。
+App Router (Cache Components 有効時)では、以下を`<Suspense>`で囲うか`'use cache'`でキャッシュするかのどちらかをしないとビルドエラーになります。
 
 | トリガー | 何が原因 |
 |----------|---------|
@@ -108,7 +94,7 @@ App Router (Cache Components 有効時) では、以下を **`<Suspense>` で囲
 
 ---
 
-## `'use cache'` でキャッシュする
+## `'use cache'`でキャッシュする
 
 ファイル / コンポーネント / 関数 の 3レベルで使えます。
 
@@ -220,7 +206,7 @@ async function UserGreeting() {
 
 **ポイント**:
 - ヘッダー `<h1>` と `<BlogPosts />` は **ビルド時に作って配信**
-- `<UserGreeting />` は `<Suspense>` で囲んだので、その内側だけ **リクエスト時に streaming**
+- `<UserGreeting />` は `<Suspense>` で囲んだので、その内側だけリクエスト時に streaming
 - これが Partial Prerendering (PPR)。最速で出せる部分だけ先に出す思想
 
 ---
@@ -263,14 +249,14 @@ async function Results({ paramsPromise }: { paramsPromise: Promise<{ q?: string 
 }
 ```
 
-**ルール**: **「動的データの `await` は、それが必要な末端のコンポーネントまで持っていく」**。
+ルール: 「動的データの `await` は、それが必要な末端のコンポーネントまで持っていく」。
 
 ---
 
-## 書き込み後のキャッシュ破棄: `updateTag` vs `revalidateTag`
+## 書き込み後のキャッシュ破棄:`updateTag`vs`revalidateTag`
 
 書き込み (Server Actions) 後、関連するキャッシュを破棄する関数が3つあります。
-**新しい書き方では `revalidatePath` よりタグベース (`updateTag` / `revalidateTag`) が推奨** されています。
+新しい書き方では `revalidatePath` よりタグベース (`updateTag` / `revalidateTag`) が推奨されています。
 
 |  | `updateTag` | `revalidateTag` | `revalidatePath` |
 |--|------------|-----------------|------------------|
@@ -324,7 +310,7 @@ export async function deletePost(id: string) {
 
 ---
 
-## ハンズオン (30分)
+## ハンズオン
 
 ### 0. 準備
 - `next.config.ts` に `cacheComponents: true` を追加 (まだなら)
@@ -346,8 +332,8 @@ export async function deletePost(id: string) {
 - ブラウザの DevTools でクッキーをセットして表示が変わることを確認
 
 ### 4. 書き込み後のキャッシュ破棄
-- 05章で書いた `createPost` Server Action を、`revalidatePath` から **`updateTag('posts')`** に書き換え
-- `getPosts()` に `cacheTag('posts')` が付いている → 投稿後に最新の一覧が見える
+- 05章で書いた `createPost` Server Actionを、`revalidatePath`から`updateTag('posts')`に書き換え
+- `getPosts()`に`cacheTag('posts')`が付いている → 投稿後に最新の一覧が見える
 
 ### 5. (発展) `<Suspense>` を意図的に外してビルド
 - `<UserGreeting />` の `<Suspense>` を外す
@@ -387,10 +373,3 @@ A. Cache Components が有効なときは **旧モデルの fetch オプショ�
 - [ ] 動的なデータ (cookies, searchParams, params) は `<Suspense>` で囲うことを覚えた
 - [ ] 書き込み後は `updateTag` / `revalidateTag` を使う、を体得した
 - [ ] ビルドエラー "Uncached data was accessed outside of <Suspense>" の意味がわかる
-
----
-
-## 次の章へ
-
-[07-test-debug.md](07-test-debug.md) ── テストとデバッグの最低ライン。
-ハッカソンで「動かない!」となったときに、自分で切り分ける武器を渡します。
