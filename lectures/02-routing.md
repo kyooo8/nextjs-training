@@ -137,12 +137,10 @@ export default async function PostDetailPage({ params }: Props) {
 
 ## 共通レイアウト (`layout.tsx`)
 
-ヘッダーやサイドバーなど、**配下の全ページに共通する枠** を書くのが `layout.tsx` です。
+ヘッダーやサイドバーなど、配下の全ページに共通する枠を書くのが `layout.tsx` です。
 スターターを `create-next-app` で作っていれば、ルートの `src/app/layout.tsx` はもう存在します (ここに `<html>` と `<body>` を書く)。
 
-ここでは「`/posts` 配下にだけサイドバーを出す」レイアウトを増やしてみます。
-
-**作るファイル**: `src/app/posts/layout.tsx`
+ここでは`/posts` 配下にだけサイドバーを出すレイアウトを増やしてみます。
 
 ```tsx
 // src/app/posts/layout.tsx
@@ -171,12 +169,12 @@ export default function PostsLayout({
 
 ポイント:
 
-- **`children` には `posts/page.tsx` や `posts/[id]/page.tsx` が入る**
-- ページを切り替えても、サイドバー部分は **再レンダリングされない** (これがレイアウトの利点)
+- `children` には `posts/page.tsx` や `posts/[id]/page.tsx` が入る
+- ページを切り替えても、サイドバー部分は再レンダリングされない(これがレイアウトの利点)
 
 ---
 
-## 404 ページ (チラ見せ)
+## 404 ページ
 
 `not-found.tsx` を置けば、存在しないルートにアクセスされたときの表示を作れます。
 
@@ -191,8 +189,6 @@ export default function NotFound() {
   );
 }
 ```
-
-これは演習では作らなくてOK。「こういうのもある」とだけ覚えておく。
 
 ---
 
@@ -218,7 +214,7 @@ export default function NotFound() {
 - 一覧の `Link` から詳細に飛べることを確認
 
 ### 5. `/posts` 配下にサイドバー (`layout.tsx`) を追加
-- 一覧画面と詳細画面で、サイドバーが **同じまま** であることを確認
+- 一覧画面と詳細画面で、サイドバーが同じままであることを確認
 - ページ切り替え時にサイドバーが点滅しなければ成功
 
 ### 6. (余裕があれば) `posts/[id]` で、`posts` 配列から該当の投稿だけを表示する
@@ -253,9 +249,6 @@ A. `<a>` を使ってませんか? `next/link` の `Link` コンポーネント�
 **Q. レイアウトが効かない (サイドバーが出ない)**
 A. ファイル名が `layout.tsx` か / `children` を `return` の中で表示しているかを確認。
 
-**Q. ターミナルに大量のエラー**
-A. ファイル名 typo か、`export default` し忘れがほとんど。
-
 ---
 
 ## チェックリスト
@@ -265,10 +258,3 @@ A. ファイル名 typo か、`export default` し忘れがほとんど。
 - [ ] `/posts/任意の数字` で詳細が表示される
 - [ ] `params` を `await` してから使うことを覚えた
 - [ ] `/posts` 配下でサイドバーが共通表示される
-
----
-
-## 次の章へ
-
-[03-server-client.md](03-server-client.md) では、この研修で **一番大事** な「Server Component と Client Component の境界」を扱います。
-ここまでで書いたコンポーネントは全部 Server Component です (意識しなくても勝手にそうなっている)。次章ではその意味を腹落ちさせます。
