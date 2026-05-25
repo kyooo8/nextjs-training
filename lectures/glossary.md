@@ -1,6 +1,6 @@
 # 用語集 (Glossary)
 
-各章から参照される用語のまとめです。**全部覚える必要はありません**。
+各章から参照される用語のまとめです。
 講義中・演習中に「これ何だっけ?」となったら戻ってくる辞書として使ってください。
 
 > 五十音 + アルファベット混在で並べています。`Ctrl + F` (検索) で探すのが速いです。
@@ -10,8 +10,7 @@
 ## A〜Z
 
 ### App Router
-Next.js の **最新のルーティング方式**。`app/` フォルダ配下にファイルを置いて URL を作る。
-旧来の Pages Router (`pages/` フォルダ) とは書き方がそこそこ違うので注意。
+Next.js のルーティング方式。`app/` フォルダ配下にファイルを置いて URL を作る。
 **この研修で扱うのはこちら**。
 
 ### Client Component
@@ -82,10 +81,6 @@ Next.js のランタイムの1つ (今回の研修では扱いません)。エ�
 Next.js 14 までのキャッシュ階層の1つ。完成した HTML をまるごとキャッシュする層。
 **Next.js 16 の Cache Components モデルでは「Static Shell」 + `'use cache'` でカバー** される形に。
 
-### `getServerSideProps`
-**旧 Pages Router** の機能。App Router では使いません。
-ブログ記事でこれが出てきたら、それは古い情報 (App Router の話ではない)。
-
 ### Hooks (フック)
 React の `use〜` で始まる関数。`useState` / `useEffect` などが代表例。
 **コンポーネント関数の中** でしか呼べない (= Client Component 限定)。
@@ -125,10 +120,6 @@ Next.js 16 の Cache Components モデルでは `'use cache'` + `cacheLife('hour
 ### OG画像 (Open Graph 画像)
 SNSでURL共有したときに見えるサムネ画像。
 動的に生成する仕組みも Next.js にある (`opengraph-image.tsx`)。研修では扱いません。
-
-### Pages Router
-Next.js の **旧来のルーティング方式**。`pages/` フォルダで書く。
-**この研修では扱いません**。ブログ記事や Stack Overflow にはまだ多く残っているので、混同に注意。
 
 ### `page.tsx`
 **そのフォルダを URL として公開する** ためのファイル。
