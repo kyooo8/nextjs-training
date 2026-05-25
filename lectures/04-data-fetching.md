@@ -184,8 +184,6 @@ export default async function PostsPage() {
 }
 ```
 
-> ハッカソンのスターターでは DB を使うものもあります。「Server Component + ORM」 がデフォルトと思ってください。
-
 ---
 
 ## Route Handler (`route.ts`) って何に使うの?
