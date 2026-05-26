@@ -6,7 +6,7 @@ export default function FavoriteButton() {
   const [isFav, setIsFav] = useState(false);
   return (
     <button onClick={() => setIsFav(!isFav)}>
-      {isFav ? "* お気に入り済み" : "- お気に入り追加"}
+      {isFav ? "* お気に入り済み" : "- お気に入りに追加"}
     </button>
   );
 }
