@@ -1,22 +1,8 @@
 "use server";
+
 import { db } from "../lib/drizzle";
 import { profilesTable } from "../db/schema";
 import { eq } from "drizzle-orm";
-
-import { me, User, profiles, Profiles as Profile } from "../data/data";
-
-export async function getMe(): Promise<User> {
-  return me;
-}
-
-export async function getMeProfiles(): Promise<Profile[]> {
-  return profiles.filter((p) => p.user_id === "99");
-}
-
-export async function getProfileById(id: string): Promise<Profile> {
-  const profile = profiles.filter((p) => p.id === id);
-  return profile[0];
-}
 
 export async function addProfile(formData: FormData) {
   await db.insert(profilesTable).values({

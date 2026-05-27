@@ -3,8 +3,8 @@ import { db } from "../lib/drizzle";
 import { eq } from "drizzle-orm";
 
 import { profilesTable } from "../db/schema";
-import { EditProfileBtn } from "./editProfileBtn";
-import { EditProfile } from "./editProfile";
+import { EditProfileBtn } from "./[id]/edit/editProfileBtn";
+import { EditProfile } from "./[id]/edit/editProfile";
 
 type Props = {
   id: number;

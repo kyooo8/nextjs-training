@@ -1,7 +1,7 @@
 import Image from "next/image";
-
-import { profilesTable } from "../db/schema";
-import { deleteProfile, editProfile } from "./actions";
+import Form from "next/form";
+import { profilesTable } from "../../../db/schema";
+import { deleteProfile, editProfile } from "../../actions";
 
 type Props = {
   data: typeof profilesTable.$inferSelect;
@@ -13,7 +13,7 @@ export function EditProfile({ data }: Props) {
       <p className="text-sm font-semibold text-gray-700 mb-3">
         プロフィール編集
       </p>
-      <form action={editProfile} className="flex flex-col gap-2">
+      <Form action={editProfile} className="flex flex-col gap-2">
         <input type="text" name="id" defaultValue={data.id} hidden />
         <input
           type="text"
@@ -58,7 +58,7 @@ export function EditProfile({ data }: Props) {
         >
           編集
         </button>
-      </form>
+      </Form>
       <form action={deleteProfile}>
         <button
           type="submit"
