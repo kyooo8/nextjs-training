@@ -14,6 +14,7 @@ export default async function UserDetailPage({ params }: Props) {
     .select()
     .from(profilesTable)
     .where(eq(profilesTable.id, id));
+
   const profile = profileResult[0];
 
   return (

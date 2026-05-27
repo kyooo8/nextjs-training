@@ -2,10 +2,10 @@ import Image from "next/image";
 import { db } from "../lib/drizzle";
 
 import { ownersTable, profilesTable } from "../db/schema";
-import { ProfileCard } from "./profileCard";
 import { AddProfileBtn } from "./[id]/add/addProfileBtn";
 import { AddProfile } from "./[id]/add/addProfile";
 import { eq } from "drizzle-orm";
+import { ProfileList } from "./profileList";
 
 export default async function ProfilePage() {
   const meProfileResult = await db
@@ -49,11 +49,7 @@ export default async function ProfilePage() {
         </AddProfileBtn>
       </div>
 
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-        {profiles.map((p) => (
-          <ProfileCard key={p.id} id={p.id} />
-        ))}
-      </div>
+      <ProfileList />
     </div>
   );
 }
