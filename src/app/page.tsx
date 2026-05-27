@@ -1,33 +1,16 @@
-import { UserCard } from "@/app/userCard";
+import { ProfileListCard } from "@/app/profileListCard";
 import { users } from "./data/data";
 import Link from "next/link";
+import { db } from "./lib/drizzle";
+import { profilesTable } from "./db/schema";
 
-export default function Home() {
+export default async function Home() {
+  const profiles = await db.select().from(profilesTable);
   return (
-    <div className="grid grid-cols-5 container mx-auto">
-      {users.map((o) => (
-        <Link key={o.name} href={`/user/${o.id}`}>
-          <UserCard data={o} />
-        </Link>
-      ))}
-      {users.map((o) => (
-        <Link key={o.name} href={`/user/${o.id}`}>
-          <UserCard data={o} />
-        </Link>
-      ))}
-      {users.map((o) => (
-        <Link key={o.name} href={`/user/${o.id}`}>
-          <UserCard data={o} />
-        </Link>
-      ))}
-      {users.map((o) => (
-        <Link key={o.name} href={`/user/${o.id}`}>
-          <UserCard data={o} />
-        </Link>
-      ))}
-      {users.map((o) => (
-        <Link key={o.name} href={`/user/${o.id}`}>
-          <UserCard data={o} />
+    <div className="max-w-6xl mx-auto px-6 py-8 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+      {profiles.map((o) => (
+        <Link key={o.name} href={`/profile/${o.id}`}>
+          <ProfileListCard data={o} />
         </Link>
       ))}
     </div>

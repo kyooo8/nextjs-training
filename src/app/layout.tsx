@@ -8,7 +8,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ja">
-      <body className="bg-mist-300 w-full ">
+      <body className="w-full min-h-screen">
         <Header />
         {children}
       </body>

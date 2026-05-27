@@ -5,7 +5,7 @@ type Props = {
   data: User;
 };
 
-export function UserCard({ data }: Props) {
+export async function UserCard({ data }: Props) {
   const imageSize = 200;
   return (
     <div
