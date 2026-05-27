@@ -3,6 +3,7 @@
 import { db } from "../lib/drizzle";
 import { profilesTable } from "../db/schema";
 import { eq } from "drizzle-orm";
+import { updateTag } from "next/cache";
 
 export async function addProfile(formData: FormData) {
   await db.insert(profilesTable).values({
@@ -12,6 +13,8 @@ export async function addProfile(formData: FormData) {
     introduction: formData.get("introduction_text") as string,
     owner_id: "1",
   });
+
+  updateTag("profile");
 }
 
 export async function editProfile(formData: FormData) {
@@ -25,10 +28,14 @@ export async function editProfile(formData: FormData) {
       owner_id: "1",
     })
     .where(eq(profilesTable.id, Number(formData.get("id"))));
+
+  updateTag("profile");
 }
 
 export async function deleteProfile(formData: FormData) {
   await db
     .delete(profilesTable)
     .where(eq(profilesTable.id, Number(formData.get("id"))));
+
+  updateTag("profile");
 }

@@ -60,11 +60,11 @@ export function EditProfile({ data }: Props) {
         </button>
       </Form>
       <form action={deleteProfile}>
+        <input type="text" name="id" defaultValue={data.id} hidden />
         <button
           type="submit"
           className="mt-1 px-6 py-2 rounded-full bg-gradient-to-r from-purple-400 to-red-400 text-white text-sm font-medium shadow hover:shadow-md hover:from-purple-500 hover:to-pink-500 transition-all duration-200"
         >
-          <input type="text" name="id" defaultValue={data.id} hidden />
           削除
         </button>
       </form>
