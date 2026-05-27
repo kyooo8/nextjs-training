@@ -1,11 +1,14 @@
 "use client";
-import { addProfile } from "./actions";
+import { addProfile } from "../../actions";
 
 export function AddProfile() {
   return (
     <div>
-      <p className="text-sm font-semibold text-gray-700 mb-4">プロフィール追加</p>
+      <p className="text-sm font-semibold text-gray-700 mb-4">
+        プロフィール追加
+      </p>
       <form action={addProfile} className="flex flex-col gap-3">
+        <input type="text" name="id" hidden />
         <input
           type="text"
           name="name"
