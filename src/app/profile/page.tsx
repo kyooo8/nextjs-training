@@ -1,7 +1,7 @@
 import Image from "next/image";
-import { profilesTable } from "../db/schema";
 import { db } from "../lib/drizzle";
 
+import { profilesTable } from "../db/schema";
 import { getMe, getMeProfiles } from "./actions";
 import { ProfileCard } from "./profileCard";
 import { AddProfileBtn } from "./addProfileBtn";
@@ -37,7 +37,9 @@ export default async function ProfilePage() {
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-lg font-semibold text-gray-700">
           公開プロフィール
-          <span className="ml-2 text-sm font-normal text-gray-400">({meProfiles.length})</span>
+          <span className="ml-2 text-sm font-normal text-gray-400">
+            ({meProfiles.length})
+          </span>
         </h2>
         <AddProfileBtn>
           <AddProfile />

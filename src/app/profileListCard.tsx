@@ -1,4 +1,3 @@
-import { User } from "@/app/data/data";
 import Image from "next/image";
 import { profilesTable } from "./db/schema";
 
