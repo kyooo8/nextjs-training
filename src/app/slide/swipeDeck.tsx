@@ -1,7 +1,8 @@
 "use client";
 
 import Image from "next/image";
-import { useState, useRef } from "react";
+import { useState } from "react";
+import { motion, useMotionValue, useTransform, animate } from "framer-motion";
 import { profilesTable } from "@/db/schema";
 import { saveReaction } from "./actions";
 
@@ -9,62 +10,84 @@ type Profile = typeof profilesTable.$inferSelect;
 
 const THRESHOLD = 100;
 
+function SwipeCard({
+  profile,
+  onSwipe,
+}: {
+  profile: Profile;
+  onSwipe: (liked: boolean) => void;
+}) {
+  const x = useMotionValue(0);
+  const rotate = useTransform(x, [-200, 200], [-20, 20]);
+  const likeOpacity = useTransform(x, [0, THRESHOLD], [0, 1]);
+  const nopeOpacity = useTransform(x, [-THRESHOLD, 0], [1, 0]);
+
+  const handleDragEnd = async (_: unknown, info: { offset: { x: number } }) => {
+    if (Math.abs(info.offset.x) > THRESHOLD) {
+      const liked = info.offset.x > 0;
+      await animate(x, liked ? 600 : -600, { duration: 0.3 });
+      onSwipe(liked);
+    } else {
+      animate(x, 0, { type: "spring", stiffness: 300, damping: 20 });
+    }
+  };
+
+  return (
+    <motion.div
+      drag="x"
+      dragConstraints={{ left: 0, right: 0 }}
+      style={{ x, rotate }}
+      onDragEnd={handleDragEnd}
+      className="absolute w-72 rounded-3xl bg-white border border-gray-200 shadow-xl overflow-hidden cursor-grab active:cursor-grabbing select-none"
+    >
+      <div className="relative">
+        <Image
+          src={`/images/${profile.img_url}`}
+          width={288}
+          height={400}
+          className="object-cover w-full h-96 pointer-events-none"
+          alt={profile.name}
+        />
+        <motion.div
+          style={{ opacity: likeOpacity }}
+          className="absolute top-4 left-4 border-4 border-green-400 text-green-400 font-bold text-2xl px-3 py-1 rounded-xl -rotate-12"
+        >
+          いいね
+        </motion.div>
+        <motion.div
+          style={{ opacity: nopeOpacity }}
+          className="absolute top-4 right-4 border-4 border-red-400 text-red-400 font-bold text-2xl px-3 py-1 rounded-xl rotate-12"
+        >
+          なし
+        </motion.div>
+      </div>
+      <div className="p-4">
+        <p className="font-bold text-gray-800">{profile.name}</p>
+        <p className="text-sm text-gray-500">{profile.age}歳</p>
+        <p className="text-sm text-gray-600 mt-1 line-clamp-2">{profile.introduction}</p>
+      </div>
+    </motion.div>
+  );
+}
+
 export function SwipeDeck({ profiles }: { profiles: Profile[] }) {
   const [index, setIndex] = useState(0);
-  const [offset, setOffset] = useState({ x: 0, y: 0 });
-  const [isDragging, setIsDragging] = useState(false);
-  const [isLeaving, setIsLeaving] = useState(false);
-  const startPos = useRef({ x: 0, y: 0 });
 
   const current = profiles[index];
   const next = profiles[index + 1];
 
+  const handleSwipe = async (liked: boolean) => {
+    if (liked) await saveReaction(current.id);
+    setIndex((i) => i + 1);
+  };
+
   if (!current) {
     return (
-      <div className="flex items-center justify-center h-[500px] text-gray-400">
+      <div className="flex items-center justify-center h-[680px] text-gray-400">
         プロフィールがありません
       </div>
     );
   }
-
-  const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
-    setIsDragging(true);
-    startPos.current = { x: e.clientX, y: e.clientY };
-    e.currentTarget.setPointerCapture(e.pointerId);
-  };
-
-  const handlePointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
-    if (!isDragging) return;
-    setOffset({
-      x: e.clientX - startPos.current.x,
-      y: e.clientY - startPos.current.y,
-    });
-  };
-
-  const handlePointerUp = async () => {
-    if (!isDragging) return;
-    setIsDragging(false);
-
-    if (Math.abs(offset.x) > THRESHOLD) {
-      const liked = offset.x > 0;
-      setIsLeaving(true);
-      setOffset({ x: liked ? 600 : -600, y: offset.y });
-
-      if (liked) await saveReaction(current.id);
-
-      setTimeout(() => {
-        setIndex((i) => i + 1);
-        setOffset({ x: 0, y: 0 });
-        setIsLeaving(false);
-      }, 300);
-    } else {
-      setOffset({ x: 0, y: 0 });
-    }
-  };
-
-  const rotation = offset.x * 0.08;
-  const liked = offset.x > THRESHOLD;
-  const disliked = offset.x < -THRESHOLD;
 
   return (
     <div className="relative flex items-center justify-center h-[680px]">
@@ -87,44 +110,7 @@ export function SwipeDeck({ profiles }: { profiles: Profile[] }) {
         </div>
       )}
 
-      <div
-        onPointerDown={handlePointerDown}
-        onPointerMove={handlePointerMove}
-        onPointerUp={handlePointerUp}
-        style={{
-          transform: `translateX(${offset.x}px) translateY(${offset.y}px) rotate(${rotation}deg)`,
-          transition: isDragging ? "none" : "transform 0.3s ease",
-          cursor: isDragging ? "grabbing" : "grab",
-        }}
-        className="absolute w-72 rounded-3xl bg-white border border-gray-200 shadow-xl overflow-hidden select-none"
-      >
-        <div className="relative">
-          <Image
-            src={`/images/${current.img_url}`}
-            width={288}
-            height={400}
-            className="object-cover w-full h-96 pointer-events-none"
-            alt={current.name}
-          />
-          {liked && (
-            <div className="absolute top-4 left-4 border-4 border-green-400 text-green-400 font-bold text-2xl px-3 py-1 rounded-xl rotate-[-20deg]">
-              いいね
-            </div>
-          )}
-          {disliked && (
-            <div className="absolute top-4 right-4 border-4 border-red-400 text-red-400 font-bold text-2xl px-3 py-1 rounded-xl rotate-[20deg]">
-              なし
-            </div>
-          )}
-        </div>
-        <div className="p-4">
-          <p className="font-bold text-gray-800">{current.name}</p>
-          <p className="text-sm text-gray-500">{current.age}歳</p>
-          <p className="text-sm text-gray-600 mt-1 line-clamp-2">
-            {current.introduction}
-          </p>
-        </div>
-      </div>
+      <SwipeCard key={index} profile={current} onSwipe={handleSwipe} />
     </div>
   );
 }
