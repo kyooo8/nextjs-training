@@ -1,7 +1,7 @@
 import { ProfileListCard } from "@/app/profileListCard";
 import Link from "next/link";
-import { db } from "./lib/drizzle";
-import { profilesTable } from "./db/schema";
+import { db } from "../lib/drizzlee";
+import { profilesTable } from "../db/schema";
 
 export default async function Home() {
   const profiles = await db.select().from(profilesTable);

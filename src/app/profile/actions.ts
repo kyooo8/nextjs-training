@@ -1,7 +1,7 @@
 "use server";
 
-import { db } from "../lib/drizzle";
-import { profilesTable } from "../db/schema";
+import { db } from "../../lib/drizzle";
+import { profilesTable } from "../../db/schema";
 import { eq } from "drizzle-orm";
 import { updateTag } from "next/cache";
 import { EditFormSchema } from "@/validations/editProfile";

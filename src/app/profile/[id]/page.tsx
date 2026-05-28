@@ -1,5 +1,5 @@
-import { profilesTable } from "@/app/db/schema";
-import { db } from "@/app/lib/drizzle";
+import { profilesTable } from "@/db/schema";
+import { db } from "@/lib/drizzle
 import { eq } from "drizzle-orm";
 import Image from "next/image";
 
