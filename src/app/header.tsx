@@ -25,6 +25,12 @@ export default function Header() {
       >
         一覧
       </Link>
+      <Link
+        className="px-4 py-1.5 rounded-full text-gray-700 text-sm hover:bg-white/50 transition-all duration-200"
+        href="/slide"
+      >
+        スワイプ
+      </Link>
     </header>
   );
 }

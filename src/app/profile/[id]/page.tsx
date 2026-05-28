@@ -20,7 +20,7 @@ export default async function UserDetailPage({ params }: Props) {
   return (
     <div className="max-w-md mx-auto px-6 py-10">
       <div className="rounded-3xl overflow-hidden bg-white/40 backdrop-blur-md border border-white/60 shadow-xl">
-        <div className="relative w-full aspect-square">
+        <div className="relative w-full aspect-[3/4]">
           <Image
             src={`/images/${profile.img_url}`}
             width={200}
