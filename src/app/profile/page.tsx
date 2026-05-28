@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { db } from "../../lib/drizzle";
+import { db } from "@/lib/drizzle";
 
 import { ownersTable, profilesTable } from "../../db/schema";
 import { AddProfileBtn } from "./[id]/add/addProfileBtn";

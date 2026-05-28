@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { profilesTable } from "../db/schemaa";
+import { profilesTable } from "@/db/schema";
 
 type Props = {
   data: typeof profilesTable.$inferSelect;
