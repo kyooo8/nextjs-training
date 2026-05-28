@@ -12,7 +12,7 @@ export function ProfileListCard({ data }: Props) {
       key={data.name}
       className="rounded-2xl overflow-hidden bg-white/40 backdrop-blur-md border border-white/60 shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-200 cursor-pointer"
     >
-      <div className="relative w-full aspect-square">
+      <div className="relative w-full aspect-[3/4]">
         <Image
           src={`/images/${data.img_url}`}
           width={imageSize}

@@ -27,3 +27,14 @@ export const viewLogTable = sqliteTable("ViewLog", {
   profile_id: int().references(() => profilesTable.id),
   created_at: text(),
 });
+
+export const reactionsTable = sqliteTable("Reactions", {
+  id: int().primaryKey({ autoIncrement: true }),
+  owner_id: text()
+    .references(() => ownersTable.id)
+    .notNull(),
+  profile_id: int()
+    .references(() => profilesTable.id)
+    .notNull(),
+  created_at: text().default(sql`(datetime('now', 'localtime'))`),
+});

@@ -20,7 +20,7 @@ export async function ProfileCard({ id }: Props) {
 
   return (
     <div className="rounded-2xl overflow-hidden bg-white/40 backdrop-blur-md border border-white/60 shadow-lg hover:shadow-xl transition-all duration-200">
-      <div className="relative w-full aspect-square">
+      <div className="relative w-full aspect-[3/4]">
         <Image
           src={`/images/${profile.img_url}`}
           width={200}
