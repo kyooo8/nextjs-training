@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { profilesTable } from "../../../db/schema";
+import { profilesTable } from "../../../../db/schema";
 import { deleteProfile, editProfile, EditState } from "../../actions";
 import { useActionState } from "react";
 

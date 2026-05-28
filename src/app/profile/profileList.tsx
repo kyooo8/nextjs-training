@@ -1,6 +1,6 @@
 import { ProfileCard } from "./profileCard";
-import { db } from "../lib/drizzle";
-import { profilesTable } from "../db/schema";
+import { db } from "@/lib/drizzle";
+import { profilesTable } from "@/db/schema";
 import { cacheTag } from "next/cache";
 
 export async function ProfileList() {

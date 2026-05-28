@@ -1,7 +1,7 @@
 import Image from "next/image";
-import { db } from "../lib/drizzle";
+import { db } from "@/lib/drizzle";
 
-import { ownersTable, profilesTable } from "../db/schema";
+import { ownersTable, profilesTable } from "../../db/schema";
 import { AddProfileBtn } from "./[id]/add/addProfileBtn";
 import { AddProfile } from "./[id]/add/addProfile";
 import { eq } from "drizzle-orm";
