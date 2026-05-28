@@ -1,20 +1,26 @@
+"use client";
+
 import Image from "next/image";
-import Form from "next/form";
 import { profilesTable } from "../../../db/schema";
-import { deleteProfile, editProfile } from "../../actions";
+import { deleteProfile, editProfile, EditState } from "../../actions";
+import { useActionState } from "react";
 
 type Props = {
   data: typeof profilesTable.$inferSelect;
 };
 
+const initialState: EditState = { ok: true };
+
 export function EditProfile({ data }: Props) {
+  const [state, actionEdit] = useActionState(editProfile, initialState);
+
   return (
     <div>
       <p className="text-sm font-semibold text-gray-700 mb-3">
         プロフィール編集
       </p>
-      <Form action={editProfile} className="flex flex-col gap-2">
-        <input type="text" name="id" defaultValue={data.id} hidden />
+      <form action={actionEdit} className="flex flex-col gap-2">
+        <input type="number" name="id" defaultValue={data.id} hidden />
         <input
           type="text"
           name="name"
@@ -22,6 +28,8 @@ export function EditProfile({ data }: Props) {
           defaultValue={data.name}
           className="w-full px-3 py-2 rounded-xl bg-white/60 border border-white/70 text-gray-700 placeholder-gray-400 text-sm outline-none focus:ring-2 focus:ring-purple-300 transition"
         />
+        {state.error?.name && <p>{state.error.name}</p>}
+
         <input
           type="text"
           name="age"
@@ -29,20 +37,26 @@ export function EditProfile({ data }: Props) {
           defaultValue={data.age}
           className="w-full px-3 py-2 rounded-xl bg-white/60 border border-white/70 text-gray-700 placeholder-gray-400 text-sm outline-none focus:ring-2 focus:ring-purple-300 transition"
         />
+        {state.error?.age && <p>{state.error.age}</p>}
+
         <input
           type="text"
-          name="introduction_text"
+          name="introduction"
           placeholder="自己紹介"
           defaultValue={data.introduction}
           className="w-full px-3 py-2 rounded-xl bg-white/60 border border-white/70 text-gray-700 placeholder-gray-400 text-sm outline-none focus:ring-2 focus:ring-purple-300 transition"
         />
+        {state.error?.introduction && <p>{state.error.introduction}</p>}
+
         <input
           type="text"
-          name="img"
+          name="img_url"
           placeholder="画像ファイル名"
           defaultValue={data.img_url}
           className="w-full px-3 py-2 rounded-xl bg-white/60 border border-white/70 text-gray-700 placeholder-gray-400 text-sm outline-none focus:ring-2 focus:ring-purple-300 transition"
         />
+        {state.error?.img_url && <p>{state.error.img_url}</p>}
+
         <div className="rounded-xl overflow-hidden mt-1">
           <Image
             src={`/images/${data.img_url}`}
@@ -58,7 +72,7 @@ export function EditProfile({ data }: Props) {
         >
           編集
         </button>
-      </Form>
+      </form>
       <form action={deleteProfile}>
         <input type="text" name="id" defaultValue={data.id} hidden />
         <button
