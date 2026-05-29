@@ -3,9 +3,14 @@
 import { useActionState } from "react";
 import { addProfile, AddState } from "../actions";
 
+type Props = {
+  defaultName?: string;
+  defaultAge?: number;
+};
+
 const initialState: AddState = { ok: true };
 
-export function AddProfile() {
+export function AddProfile({ defaultName, defaultAge }: Props) {
   const [state, actionAdd] = useActionState(addProfile, initialState);
   return (
     <div>
@@ -18,6 +23,7 @@ export function AddProfile() {
           type="text"
           name="name"
           placeholder="名前"
+          defaultValue={defaultName}
           className="w-full px-4 py-2 rounded-xl bg-white/60 border border-white/70 text-gray-700 placeholder-gray-400 text-sm outline-none focus:ring-2 focus:ring-pink-300 transition"
         />
         {state.error?.name && <p>{state.error.name}</p>}
@@ -26,6 +32,7 @@ export function AddProfile() {
           type="text"
           name="age"
           placeholder="年齢"
+          defaultValue={defaultAge}
           className="w-full px-4 py-2 rounded-xl bg-white/60 border border-white/70 text-gray-700 placeholder-gray-400 text-sm outline-none focus:ring-2 focus:ring-pink-300 transition"
         />
         {state.error?.age && <p>{state.error.age}</p>}

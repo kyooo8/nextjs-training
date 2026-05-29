@@ -1,11 +1,12 @@
 import { db } from "@/lib/drizzle";
 import { Suspense } from "react";
 
-import { profilesTable } from "../../../db/schema";
+import { ownersTable, profilesTable } from "../../../db/schema";
 import { AddProfileBtn } from "./add/addProfileBtn";
 import { AddProfile } from "./add/addProfile";
 import { ProfileList } from "./profileList";
 import { OwnerCard } from "./ownerCard";
+import { eq } from "drizzle-orm";
 
 async function ProfileCount() {
   const profiles = await db.select().from(profilesTable);
@@ -13,6 +14,19 @@ async function ProfileCount() {
     <span className="ml-2 text-sm font-normal text-gray-400">
       ({profiles.length})
     </span>
+  );
+}
+
+async function AddProfileSection() {
+  const [owner] = await db
+    .select({ name: ownersTable.name, age: ownersTable.age })
+    .from(ownersTable)
+    .where(eq(ownersTable.id, "1"));
+
+  return (
+    <AddProfileBtn>
+      <AddProfile defaultName={owner?.name} defaultAge={owner?.age} />
+    </AddProfileBtn>
   );
 }
 
@@ -30,9 +44,9 @@ export default function ProfilePage() {
             <ProfileCount />
           </Suspense>
         </h2>
-        <AddProfileBtn>
-          <AddProfile />
-        </AddProfileBtn>
+        <Suspense fallback={null}>
+          <AddProfileSection />
+        </Suspense>
       </div>
 
       <ProfileList />
