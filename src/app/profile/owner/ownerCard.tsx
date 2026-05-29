@@ -1,7 +1,6 @@
 import { db } from "@/lib/drizzle";
 import Image from "next/image";
 import { ownersTable } from "@/db/schema";
-import { EditProfileBtn } from "./edit/editProfileBtn";
 import { EditOwner } from "./editOwner";
 import { eq } from "drizzle-orm";
 
@@ -31,9 +30,7 @@ export async function OwnerCard() {
           <p className="text-xl font-bold text-gray-800">{meData.name}</p>
           <p className="text-gray-500 mt-1">{meData.introduction}</p>
         </div>
-        <EditProfileBtn>
-          <EditOwner data={meData} />
-        </EditProfileBtn>
+        <EditOwner data={meData} />
       </div>
     </div>
   );

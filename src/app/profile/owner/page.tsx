@@ -2,7 +2,6 @@ import { db } from "@/lib/drizzle";
 import { Suspense } from "react";
 
 import { ownersTable, profilesTable } from "../../../db/schema";
-import { AddProfileBtn } from "./add/addProfileBtn";
 import { AddProfile } from "./add/addProfile";
 import { ProfileList } from "./profileList";
 import { OwnerCard } from "./ownerCard";
@@ -23,11 +22,7 @@ async function AddProfileSection() {
     .from(ownersTable)
     .where(eq(ownersTable.id, "1"));
 
-  return (
-    <AddProfileBtn>
-      <AddProfile defaultName={owner?.name} defaultAge={owner?.age} />
-    </AddProfileBtn>
-  );
+  return <AddProfile defaultName={owner?.name} defaultAge={owner?.age} />;
 }
 
 export default function ProfilePage() {

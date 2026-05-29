@@ -3,7 +3,6 @@ import { db } from "@/lib/drizzle";
 import { eq } from "drizzle-orm";
 
 import { profilesTable } from "@/db/schema";
-import { EditProfileBtn } from "./edit/editProfileBtn";
 import { EditProfile } from "./edit/editProfile";
 
 type Props = {
@@ -35,9 +34,7 @@ export async function ProfileCard({ id }: Props) {
         <p className="text-xs text-gray-500">{profile.introduction}</p>
         <p className="text-xs text-gray-400 mt-1">{profile.created_at}</p>
         <div className="mt-3">
-          <EditProfileBtn>
-            <EditProfile data={profile} />
-          </EditProfileBtn>
+          <EditProfile data={profile} />
         </div>
       </div>
     </div>

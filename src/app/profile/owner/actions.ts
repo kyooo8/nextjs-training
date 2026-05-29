@@ -6,7 +6,7 @@ import { eq } from "drizzle-orm";
 import { updateTag } from "next/cache";
 import { uploadAsWebP, deleteBlob } from "@/lib/blob";
 import { z } from "zod";
-import { profilesTable } from "@/db/schema";
+import { profilesTable, reactionsTable, viewLogTable } from "@/db/schema";
 import { EditFormSchema } from "@/validations/editProfile";
 import { AddFormSchema } from "@/validations/addProfile";
 
@@ -169,6 +169,8 @@ export async function deleteProfile(formData: FormData) {
 
   await deleteBlob(profile?.img_url);
 
+  await db.delete(reactionsTable).where(eq(reactionsTable.profile_id, id));
+  await db.delete(viewLogTable).where(eq(viewLogTable.profile_id, id));
   await db.delete(profilesTable).where(eq(profilesTable.id, id));
 
   updateTag("profile");
