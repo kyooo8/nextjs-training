@@ -15,7 +15,7 @@ export default function Header() {
       </button>
       <Link
         className="px-4 py-1.5 rounded-full text-gray-700 text-sm hover:bg-white/50 transition-all duration-200"
-        href="/profile"
+        href="/profile/owner"
       >
         プロフィール
       </Link>

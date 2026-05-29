@@ -1,11 +1,11 @@
 import { db } from "@/lib/drizzle";
 import { Suspense } from "react";
 
-import { profilesTable } from "../../db/schema";
-import { AddProfileBtn } from "./[id]/add/addProfileBtn";
-import { AddProfile } from "./[id]/add/addProfile";
+import { profilesTable } from "../../../db/schema";
+import { AddProfileBtn } from "./add/addProfileBtn";
+import { AddProfile } from "./add/addProfile";
 import { ProfileList } from "./profileList";
-import { OwnerCard } from "./owner/ownerCard";
+import { OwnerCard } from "./ownerCard";
 
 async function ProfileCount() {
   const profiles = await db.select().from(profilesTable);

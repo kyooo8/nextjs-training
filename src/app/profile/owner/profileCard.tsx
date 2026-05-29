@@ -2,9 +2,9 @@ import Image from "next/image";
 import { db } from "@/lib/drizzle";
 import { eq } from "drizzle-orm";
 
-import { profilesTable } from "../../db/schema";
-import { EditProfileBtn } from "./[id]/edit/editProfileBtn";
-import { EditProfile } from "./[id]/edit/editProfile";
+import { profilesTable } from "@/db/schema";
+import { EditProfileBtn } from "./edit/editProfileBtn";
+import { EditProfile } from "./edit/editProfile";
 
 type Props = {
   id: number;

@@ -1,7 +1,7 @@
 import { db } from "@/lib/drizzle";
 import Image from "next/image";
 import { ownersTable } from "@/db/schema";
-import { EditProfileBtn } from "../[id]/edit/editProfileBtn";
+import { EditProfileBtn } from "./edit/editProfileBtn";
 import { EditOwner } from "./editOwner";
 import { eq } from "drizzle-orm";
 

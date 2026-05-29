@@ -1,7 +1,7 @@
 "use client";
 
 import { useActionState } from "react";
-import { addProfile, AddState } from "../../actions";
+import { addProfile, AddState } from "../actions";
 
 const initialState: AddState = { ok: true };
 
