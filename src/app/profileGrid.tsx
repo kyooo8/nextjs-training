@@ -8,9 +8,9 @@ export async function ProfileGrid() {
 
   return (
     <>
-      {profiles.map((o) => (
-        <Link key={o.name} href={`/profile/${o.id}`}>
-          <ProfileListCard data={o} />
+      {profiles.map((p) => (
+        <Link key={p.id} href={`/profile/${p.id}`}>
+          <ProfileListCard data={p} />
         </Link>
       ))}
     </>

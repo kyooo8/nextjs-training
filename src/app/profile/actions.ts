@@ -4,6 +4,8 @@ import { db } from "../../lib/drizzle";
 import { profilesTable } from "../../db/schema";
 import { eq } from "drizzle-orm";
 import { updateTag } from "next/cache";
+import { put, del } from "@vercel/blob";
+import sharp from "sharp";
 import { EditFormSchema } from "@/validations/editProfile";
 import { AddFormSchema } from "@/validations/addProfile";
 
@@ -17,15 +19,30 @@ type Error = {
 export type EditState = { ok: boolean; error?: Error };
 export type AddState = { ok: boolean; error?: Error };
 
+async function uploadAsWebP(file: File, ownerId: string): Promise<string> {
+  const buffer = Buffer.from(await file.arrayBuffer());
+  const webpBuffer = await sharp(buffer).webp({ quality: 80 }).toBuffer();
+  const pathname = `${ownerId}/${crypto.randomUUID()}.webp`;
+  const blob = await put(pathname, webpBuffer, {
+    access: "private",
+    contentType: "image/webp",
+  });
+  return blob.url;
+}
+
 export async function addProfile(
   _prevState: EditState,
   formData: FormData,
 ): Promise<AddState> {
+  const file = formData.get("img_file") as File | null;
+  if (!file || file.size === 0) {
+    return { ok: false, error: { img_url: "画像を選択してください" } };
+  }
+
   const addData = AddFormSchema.safeParse({
     id: formData.get("id"),
     name: formData.get("name"),
     age: formData.get("age"),
-    img_url: formData.get("img_url"),
     introduction: formData.get("introduction"),
   });
 
@@ -38,10 +55,12 @@ export async function addProfile(
     return { ok: false, error: fieldErrors };
   }
 
+  const img_url = await uploadAsWebP(file, "1");
+
   await db.insert(profilesTable).values({
     name: addData.data.name,
     age: addData.data.age,
-    img_url: addData.data.img_url,
+    img_url,
     introduction: addData.data.introduction,
     owner_id: "1",
   });
@@ -54,11 +73,13 @@ export async function editProfile(
   _prevState: EditState,
   formData: FormData,
 ): Promise<EditState> {
+  const file = formData.get("img_file") as File | null;
+  const currentImgUrl = formData.get("current_img_url") as string;
+
   const editData = EditFormSchema.safeParse({
     id: formData.get("id"),
     name: formData.get("name"),
     age: formData.get("age"),
-    img_url: formData.get("img_url"),
     introduction: formData.get("introduction"),
   });
 
@@ -71,12 +92,18 @@ export async function editProfile(
     return { ok: false, error: fieldErrors };
   }
 
+  let img_url = currentImgUrl;
+  if (file && file.size > 0) {
+    await del(currentImgUrl);
+    img_url = await uploadAsWebP(file, "1");
+  }
+
   await db
     .update(profilesTable)
     .set({
       name: editData.data.name,
       age: editData.data.age,
-      img_url: editData.data.img_url,
+      img_url,
       introduction: editData.data.introduction,
       owner_id: "1",
     })
@@ -87,9 +114,18 @@ export async function editProfile(
 }
 
 export async function deleteProfile(formData: FormData) {
-  await db
-    .delete(profilesTable)
-    .where(eq(profilesTable.id, Number(formData.get("id"))));
+  const id = Number(formData.get("id"));
+
+  const [profile] = await db
+    .select({ img_url: profilesTable.img_url })
+    .from(profilesTable)
+    .where(eq(profilesTable.id, id));
+
+  if (profile?.img_url) {
+    await del(profile.img_url);
+  }
+
+  await db.delete(profilesTable).where(eq(profilesTable.id, id));
 
   updateTag("profile");
 }

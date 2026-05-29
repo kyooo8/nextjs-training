@@ -48,18 +48,18 @@ export function EditProfile({ data }: Props) {
         />
         {state.error?.introduction && <p>{state.error.introduction}</p>}
 
+        <input type="hidden" name="current_img_url" value={data.img_url} />
         <input
-          type="text"
-          name="img_url"
-          placeholder="画像ファイル名"
-          defaultValue={data.img_url}
-          className="w-full px-3 py-2 rounded-xl bg-white/60 border border-white/70 text-gray-700 placeholder-gray-400 text-sm outline-none focus:ring-2 focus:ring-purple-300 transition"
+          type="file"
+          name="img_file"
+          accept="image/*"
+          className="w-full px-3 py-2 rounded-xl bg-white/60 border border-white/70 text-gray-700 text-sm outline-none focus:ring-2 focus:ring-purple-300 transition"
         />
         {state.error?.img_url && <p>{state.error.img_url}</p>}
 
         <div className="rounded-xl overflow-hidden mt-1">
           <Image
-            src={`/images/${data.img_url}`}
+            src={`/api/image?url=${encodeURIComponent(data.img_url)}`}
             height={120}
             width={120}
             className="object-cover w-full"

@@ -10,7 +10,6 @@ export const AddFormSchema = z.object({
     .string()
     .min(1, { message: "自己紹介を入力してください" })
     .max(500, { message: "500文字以下にしてください" }),
-  img_url: z.string().min(1, { message: "画像を指定してください" }),
 });
 
 export type AddFormType = z.infer<typeof AddFormSchema>;

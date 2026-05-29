@@ -14,7 +14,7 @@ export function ProfileListCard({ data }: Props) {
     >
       <div className="relative w-full aspect-[3/4]">
         <Image
-          src={`/images/${data.img_url}`}
+          src={`/api/image?url=${encodeURIComponent(data.img_url)}`}
           width={imageSize}
           height={imageSize}
           className="object-cover w-full h-full"

@@ -42,7 +42,7 @@ function SwipeCard({
     >
       <div className="relative">
         <Image
-          src={`/images/${profile.img_url}`}
+          src={`/api/image?url=${encodeURIComponent(profile.img_url)}`}
           width={288}
           height={400}
           className="object-cover w-full h-96 pointer-events-none"
@@ -97,7 +97,7 @@ export function SwipeDeck({ profiles }: { profiles: Profile[] }) {
       {next && (
         <div className="absolute w-72 rounded-3xl bg-white border border-gray-200 shadow-lg overflow-hidden scale-95 opacity-60">
           <Image
-            src={`/images/${next.img_url}`}
+            src={`/api/image?url=${encodeURIComponent(next.img_url)}`}
             width={288}
             height={400}
             className="object-cover w-full h-96"

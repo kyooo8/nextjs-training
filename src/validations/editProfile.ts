@@ -10,7 +10,6 @@ export const EditFormSchema = z.object({
     .string()
     .min(1, { message: "自己紹介を入力してください" })
     .max(500, { message: "500文字以下にしてください" }),
-  img_url: z.string().min(1, { message: "画像を指定してください" }),
 });
 
 export type EditFormType = z.infer<typeof EditFormSchema>;
