@@ -22,7 +22,7 @@ async function ProfileDetail({ params }: Props) {
     <div className="rounded-3xl overflow-hidden bg-white/40 backdrop-blur-md border border-white/60 shadow-xl">
       <div className="relative w-full aspect-[3/4]">
         <Image
-          src={`/images/${profile.img_url}`}
+          src={`/api/image?url=${profile.img_url}`}
           width={200}
           height={200}
           className="object-cover w-full h-full"
@@ -41,7 +41,7 @@ async function ProfileDetail({ params }: Props) {
   );
 }
 
-export default function UserDetailPage({ params }: Props) {
+export default function ProfileDetailPage({ params }: Props) {
   return (
     <div className="max-w-md mx-auto px-6 py-10">
       <Suspense fallback={<div className="text-gray-400">Loading...</div>}>

@@ -14,7 +14,7 @@ export function ProfileListCard({ data }: Props) {
     >
       <div className="relative w-full aspect-[3/4]">
         <Image
-          src={`/images/${data.img_url}`}
+          src={`/api/image?url=${encodeURIComponent(data.img_url)}`}
           width={imageSize}
           height={imageSize}
           className="object-cover w-full h-full"
@@ -25,8 +25,9 @@ export function ProfileListCard({ data }: Props) {
       <div className="p-3">
         <p className="font-semibold text-gray-800">{data.name}</p>
         <p className="text-sm text-gray-500">{data.age}歳</p>
-        <p className="text-xs text-gray-400 mt-1 line-clamp-2">
-          {data.introduction}
+        <p className="text-xs text-gray-400 mt-1">
+          {data.introduction?.slice(0, 20)}
+          {(data.introduction?.length ?? 0) > 10 && "…"}
         </p>
       </div>
     </div>
