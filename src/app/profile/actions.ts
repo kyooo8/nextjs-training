@@ -4,8 +4,7 @@ import { db } from "../../lib/drizzle";
 import { profilesTable } from "../../db/schema";
 import { eq } from "drizzle-orm";
 import { updateTag } from "next/cache";
-import { put, del } from "@vercel/blob";
-import sharp from "sharp";
+import { uploadAsWebP, deleteBlob } from "@/lib/blob";
 import { EditFormSchema } from "@/validations/editProfile";
 import { AddFormSchema } from "@/validations/addProfile";
 
@@ -18,17 +17,6 @@ type Error = {
 
 export type EditState = { ok: boolean; error?: Error };
 export type AddState = { ok: boolean; error?: Error };
-
-async function uploadAsWebP(file: File, ownerId: string): Promise<string> {
-  const buffer = Buffer.from(await file.arrayBuffer());
-  const webpBuffer = await sharp(buffer).webp({ quality: 80 }).toBuffer();
-  const pathname = `${ownerId}/${crypto.randomUUID()}.webp`;
-  const blob = await put(pathname, webpBuffer, {
-    access: "private",
-    contentType: "image/webp",
-  });
-  return blob.url;
-}
 
 export async function addProfile(
   _prevState: EditState,
@@ -94,7 +82,7 @@ export async function editProfile(
 
   let img_url = currentImgUrl;
   if (file && file.size > 0) {
-    await del(currentImgUrl);
+    await deleteBlob(currentImgUrl);
     img_url = await uploadAsWebP(file, "1");
   }
 
@@ -121,9 +109,7 @@ export async function deleteProfile(formData: FormData) {
     .from(profilesTable)
     .where(eq(profilesTable.id, id));
 
-  if (profile?.img_url) {
-    await del(profile.img_url);
-  }
+  await deleteBlob(profile?.img_url);
 
   await db.delete(profilesTable).where(eq(profilesTable.id, id));
 

@@ -41,7 +41,7 @@ async function ProfileDetail({ params }: Props) {
   );
 }
 
-export default function UserDetailPage({ params }: Props) {
+export default function ProfileDetailPage({ params }: Props) {
   return (
     <div className="max-w-md mx-auto px-6 py-10">
       <Suspense fallback={<div className="text-gray-400">Loading...</div>}>
